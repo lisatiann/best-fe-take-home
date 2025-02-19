@@ -1,14 +1,12 @@
 import { useState } from "react";
-// import CreateTaskDialog from "./CreateTaskDialog";
+import CreateTaskDialog from "./CreateTaskDialog";
 import Task from "./Task";
 import ToolBar from "./ToolBar";
 import { Button, Table, TableBody, TableContainer, TableHead, Paper, TablePagination } from "@mui/material";
+import { priorityOrder, statusOrder } from "../constant";
 import mockData from '../assets/mockData.json';
 
 // manually set the order of priority and status
-const priorityOrder = { none: 1, low: 2, medium: 3, high: 4, urgent: 5 };
-const statusOrder = { not_started: 1, in_progress: 2, completed: 3 };
-
 const getOrderValue = (orderBy, value) => {
   if (orderBy === 'priority') {
     return priorityOrder[value];
@@ -60,8 +58,8 @@ const TableView = () => {
   return (
     <div>
       <TableContainer component={Paper}>
-        {/* <Button variant="contained" onClick={() => setOpen(true)}>Create Task</Button>
-        <CreateTaskDialog open={open} onClose={() => setOpen(false)} onCreate={handleCreateTask} /> */}
+        <Button variant="contained" onClick={() => setOpen(true)}>Create Task</Button>
+        <CreateTaskDialog newID={tasks.length+1} open={open} onClose={() => setOpen(false)} onCreate={handleCreateTask} />
         <Table>
           <TableHead>
             <ToolBar

@@ -1,10 +1,9 @@
 import { TableRow, TableCell } from '@mui/material';
 import PropTypes from 'prop-types';
 
-const Task = ({ id, title, priority, completionStatus }) => {
+const Task = ({ title, priority, completionStatus }) => {
   return (
     <TableRow>
-      <TableCell>{id}</TableCell>
       <TableCell>{title}</TableCell>
       <TableCell>{priority}</TableCell>
       <TableCell>{completionStatus}</TableCell>

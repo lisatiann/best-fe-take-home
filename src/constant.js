@@ -5,3 +5,4 @@ export const completionStatusLabel = {
   in_progress: 'In Progress',
   completed: 'Completed',
 }
+export const customFieldTypes = ['text', 'number', 'checkbox']

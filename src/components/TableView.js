@@ -19,6 +19,8 @@ const getOrderValue = (orderBy, value) => {
 
 const TableView = () => {
   const [tasks, setTasks] = useState(mockData);
+  const [toolBarTitles, setToolBarTitles] = useState(['Title', 'Priority', 'Status']);
+  const [customFields, setCustomFields] = useState([]);
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -55,6 +57,22 @@ const TableView = () => {
     setTasks([...tasks, newTask]);
   };
 
+  const handleAddField = (field) => {
+    setToolBarTitles([...toolBarTitles, field.title]);
+    setCustomFields([...customFields, field]);
+    setTasks(tasks.map(task => {
+      return { ...task, [field.title]: field.type === 'checkbox' ? false : '' };
+    }));
+  };
+
+  const handleDeleteField = (title) => {
+    setCustomFields(customFields.filter(field => field.title !== title));
+    setTasks(tasks.map(task => {
+      const { [title]: deletedField, ...rest } = task;
+      return rest;
+    }));
+  };
+
   return (
     <div>
       <TableContainer component={Paper}>
@@ -63,9 +81,13 @@ const TableView = () => {
         <Table>
           <TableHead>
             <ToolBar
+              toolBarTitles={toolBarTitles}
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
+              onAddField={handleAddField}
+              onDeleteField={handleDeleteField}
+              setToolBarTitles={setToolBarTitles}
             />
           </TableHead>
           <TableBody>
@@ -73,9 +95,8 @@ const TableView = () => {
             {sortedTasks.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((task, index) => (
               <Task
                 key={index}
-                title={task.title}
-                priority={task.priority}
-                completionStatus={task.status}
+                task={task}
+                toolBarTitles={toolBarTitles}
               />
             ))}
           </TableBody>

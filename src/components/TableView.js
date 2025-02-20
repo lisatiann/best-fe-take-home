@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import CreateTaskDialog from "./CreateTaskDialog";
 import Task from "./Task";
 import ToolBar from "./ToolBar";
@@ -19,6 +19,8 @@ const getOrderValue = (orderBy, value) => {
 
 const TableView = () => {
   const [tasks, setTasks] = useState(mockData);
+  const [toolBarTitles, setToolBarTitles] = useState(['Title', 'Priority', 'Status']);
+  const [customFields, setCustomFields] = useState([]);
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -44,15 +46,33 @@ const TableView = () => {
     setPage(0);
   };
 
-  // sort the tasks array based on the selected column
-  const sortedTasks = tasks.sort((a, b) => {
-    const aValue = getOrderValue(orderBy, a[orderBy]);
-    const bValue = getOrderValue(orderBy, b[orderBy]);
-    return (aValue < bValue ? -1 : 1) * (order === 'asc' ? 1 : -1);
-  });
+  // memoize and update the order based on the selected column
+  const sortedTasks = useMemo(() => {
+    return tasks.sort((a, b) => {
+      const aValue = getOrderValue(orderBy, a[orderBy]);
+      const bValue = getOrderValue(orderBy, b[orderBy]);
+      return (aValue < bValue ? -1 : 1) * (order === 'asc' ? 1 : -1);
+    });
+  }, [tasks, order, orderBy]);
 
   const handleCreateTask = (newTask) => {
     setTasks([...tasks, newTask]);
+  };
+
+  const handleAddField = (field) => {
+    setToolBarTitles([...toolBarTitles, field.title]);
+    setCustomFields([...customFields, field]);
+    setTasks(tasks.map(task => {
+      return { ...task, [field.title]: field.type === 'checkbox' ? false : '' };
+    }));
+  };
+
+  const handleDeleteField = (title) => {
+    setCustomFields(customFields.filter(field => field.title !== title));
+    setTasks(tasks.map(task => {
+      const { [title]: deletedField, ...rest } = task;
+      return rest;
+    }));
   };
 
   return (
@@ -63,9 +83,13 @@ const TableView = () => {
         <Table>
           <TableHead>
             <ToolBar
+              toolBarTitles={toolBarTitles}
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
+              onAddField={handleAddField}
+              onDeleteField={handleDeleteField}
+              setToolBarTitles={setToolBarTitles}
             />
           </TableHead>
           <TableBody>
@@ -73,9 +97,8 @@ const TableView = () => {
             {sortedTasks.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((task, index) => (
               <Task
                 key={index}
-                title={task.title}
-                priority={task.priority}
-                completionStatus={task.status}
+                task={task}
+                toolBarTitles={toolBarTitles}
               />
             ))}
           </TableBody>

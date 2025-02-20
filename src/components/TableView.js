@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import CreateTaskDialog from "./CreateTaskDialog";
+import CreateAndEditTaskDialog from "./CreateAndEditTaskDialog";
 import Task from "./Task";
 import ToolBar from "./ToolBar";
 import { Button, Table, TableBody, TableContainer, TableHead, Paper, TablePagination } from "@mui/material";
@@ -35,7 +35,6 @@ const TableView = () => {
     setOrderBy(property);
   };
 
-  // change the current page
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -48,15 +47,20 @@ const TableView = () => {
 
   // memoize and update the order based on the selected column
   const sortedTasks = useMemo(() => {
-    return tasks.sort((a, b) => {
+    return tasks.slice().sort((a, b) => {
       const aValue = getOrderValue(orderBy, a[orderBy]);
       const bValue = getOrderValue(orderBy, b[orderBy]);
       return (aValue < bValue ? -1 : 1) * (order === 'asc' ? 1 : -1);
     });
-  }, [tasks, order, orderBy]);
+  }, [tasks, order, orderBy]);  
 
   const handleCreateTask = (newTask) => {
     setTasks([...tasks, newTask]);
+  };
+
+  const handleEditTask = (updatedTask) => {
+    const index = tasks.findIndex(task => task.id === updatedTask.id);
+    setTasks([...tasks.slice(0, index), updatedTask, ...tasks.slice(index + 1)]);
   };
 
   const handleAddField = (field) => {
@@ -73,13 +77,21 @@ const TableView = () => {
       const { [title]: deletedField, ...rest } = task;
       return rest;
     }));
+    setToolBarTitles(toolBarTitles.filter(toolBarTitle => toolBarTitle !== title));
   };
 
   return (
     <div>
       <TableContainer component={Paper}>
         <Button variant="contained" onClick={() => setOpen(true)}>Create Task</Button>
-        <CreateTaskDialog newID={tasks.length+1} open={open} onClose={() => setOpen(false)} onCreate={handleCreateTask} />
+        <CreateAndEditTaskDialog
+          newID={tasks.length + 1}
+          open={open}
+          onClose={() => setOpen(false)}
+          onCreate={handleCreateTask}
+          toolBarTitles={toolBarTitles}
+          customFields={customFields}
+        />
         <Table>
           <TableHead>
             <ToolBar
@@ -99,6 +111,8 @@ const TableView = () => {
                 key={index}
                 task={task}
                 toolBarTitles={toolBarTitles}
+                handleEditTask={handleEditTask}
+                customFields={customFields}
               />
             ))}
           </TableBody>

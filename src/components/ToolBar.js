@@ -57,6 +57,11 @@ const ToolBar = ({ toolBarTitles, order, orderBy, onRequestSort, onAddField, onD
     setConfirmDeleteOpen(false);
   };
 
+  const handleCloseConfirmDelete = () => {
+    setConfirmDeleteOpen(false);
+    handleMenuClose();
+  }
+
   return (
     <TableRow>
       {toolBarTitles.map((title, index) => (
@@ -68,7 +73,9 @@ const ToolBar = ({ toolBarTitles, order, orderBy, onRequestSort, onAddField, onD
           >
             {title}
           </TableSortLabel>
-          {title !== 'Title' && <ArrowDropDownIcon onClick={(event) => handleMenuOpen(event, title)} />}
+          <Button>
+            <ArrowDropDownIcon onClick={(event) => handleMenuOpen(event, title)} />
+          </Button>
           <Menu
             anchorEl={fieldMenuAnchorEl}
             open={Boolean(fieldMenuAnchorEl)}
@@ -79,7 +86,9 @@ const ToolBar = ({ toolBarTitles, order, orderBy, onRequestSort, onAddField, onD
         </TableCell>
       ))}
       <TableCell>
-        <AddIcon onClick={() => setAddCustomOpen(true)} />
+        <Button>
+          <AddIcon onClick={() => setAddCustomOpen(true)} />
+        </Button>
       </TableCell>
       <Dialog open={addCustomOpen} onClose={onClose}>
         <DialogTitle>Add Field</DialogTitle>
@@ -109,7 +118,7 @@ const ToolBar = ({ toolBarTitles, order, orderBy, onRequestSort, onAddField, onD
           Are you sure you want to delete the field "{selectedField}"?
         </DialogContent>
         <DialogActions>
-          <Button onClick={()=> setConfirmDeleteOpen(false)}>Cancel</Button>
+          <Button onClick={handleCloseConfirmDelete}>Cancel</Button>
           <Button onClick={handleDeleteField}>Delete</Button>
         </DialogActions>
       </Dialog>

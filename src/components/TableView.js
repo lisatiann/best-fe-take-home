@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import CreateTaskDialog from "./CreateTaskDialog";
 import Task from "./Task";
 import ToolBar from "./ToolBar";
@@ -46,12 +46,14 @@ const TableView = () => {
     setPage(0);
   };
 
-  // sort the tasks array based on the selected column
-  const sortedTasks = tasks.sort((a, b) => {
-    const aValue = getOrderValue(orderBy, a[orderBy]);
-    const bValue = getOrderValue(orderBy, b[orderBy]);
-    return (aValue < bValue ? -1 : 1) * (order === 'asc' ? 1 : -1);
-  });
+  // memoize and update the order based on the selected column
+  const sortedTasks = useMemo(() => {
+    return tasks.sort((a, b) => {
+      const aValue = getOrderValue(orderBy, a[orderBy]);
+      const bValue = getOrderValue(orderBy, b[orderBy]);
+      return (aValue < bValue ? -1 : 1) * (order === 'asc' ? 1 : -1);
+    });
+  }, [tasks, order, orderBy]);
 
   const handleCreateTask = (newTask) => {
     setTasks([...tasks, newTask]);

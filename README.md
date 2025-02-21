@@ -1,4 +1,32 @@
-# Getting Started with Create React App
+# Best-FE-Take-Home
+
+## Overview of Solution
+
+I have built this task management app with Javascript, React, and Material-UI. It is a CRUD application that allows users to create tasks with a title, priority, status, and other custom fields. Users are also able to filter and sort their tasks.
+
+## Assumptions and Design Decisions
+
+1. **Assumptions:**
+   - Users will only interact with the app on mouse and keyboard.
+   - I am allowed to copy and paste the mockData directly in the code as a json file.
+   - If users cancel an interaction, such as create task or edit task, the state should be persisted.
+
+
+2. **Design Decisions:**
+   - I used MUI components to speed up the development process and to keep the styling consistent.
+   - The state is managed with react hooks.
+   - The app is broken down into reusable and easy to maintain components.
+   - I used Javascript with PropTypes over Typescript due to project size.
+
+## Bonus Milestones Implemented
+
+I didn't make it to the bonus milestones.
+
+## Interesting Things to Know
+
+1. **Error Checking:** I've implemented error checking throughout the input dialogs to ensure that users aren't able to add tasks without titles, add custom fields without types, etc.
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

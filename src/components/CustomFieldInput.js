@@ -6,7 +6,7 @@ const CustomFieldInput = ({ field, value, onChange }) => {
     <FormControl fullWidth>
       {field.type === "text" && (
         <TextField
-          label={field.title}
+          label={field.title[0].toUpperCase() + field.title.slice(1)}
           name={field.title}
           value={value || ""}
           onChange={onChange}
@@ -15,7 +15,7 @@ const CustomFieldInput = ({ field, value, onChange }) => {
       )}
       {field.type === "number" && (
         <TextField
-          label={field.title}
+          label={field.title[0].toUpperCase() + field.title.slice(1)}
           name={field.title}
           type="number"
           value={value}
@@ -32,7 +32,7 @@ const CustomFieldInput = ({ field, value, onChange }) => {
               onChange={onChange}
             />
           }
-          label={field.title}
+          label={field.title[0].toUpperCase() + field.title.slice(1)}
         />
       )}
     </FormControl>

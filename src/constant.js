@@ -18,4 +18,18 @@ export const completionStatusLabel = {
   completed: "Completed"
 };
 
-export const customFieldTypes = ['text', 'number', 'checkbox']
+export const customFieldTypes = ['text', 'number', 'checkbox'];
+
+export const priorityColors = {
+  none: '#757575',
+  low: '#388e3c',
+  medium: '#f57c00',
+  high: '#d32f2f',
+  urgent: '#b71c1c'
+};
+
+export const statusColors = {
+  not_started: '#757575',
+  in_progress: '#1976d2',
+  completed: '#388e3c'
+};

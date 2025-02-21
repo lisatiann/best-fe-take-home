@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextField, IconButton, Menu, MenuItem, FormControl, InputLabel, Select, Checkbox, FormControlLabel, Button } from "@mui/material";
+import { TextField, IconButton, Menu, MenuItem, FormControl, InputLabel, Select, Checkbox, FormControlLabel, Button, InputAdornment, OutlinedInput, FormHelperText } from "@mui/material";
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { priorityOrder, statusOrder, completionStatusLabel } from "../constant";
 import PropTypes from "prop-types";
@@ -37,15 +37,21 @@ const FilterTools = ({ filter, setFilter, toolBarTitles, customFields, filters, 
 
   return (
     <div>
-      <TextField
-        label="Search"
-        value={filter}
-        onChange={(event) => setFilter(event.target.value)}
-        fullWidth
-      />
-      <IconButton onClick={handleFilterIconClick}>
-        <FilterListIcon />
-      </IconButton>
+      <FormControl variant="outlined" fullWidth>
+        <OutlinedInput
+          sx={{ height: '35px', fontSize: '13px' }}
+          value={filter}
+          onChange={(event) => setFilter(event.target.value)}
+          endAdornment={
+              <InputAdornment position="end">
+                <IconButton sx={{ height: 12, width: 12 }}onClick={handleFilterIconClick}>
+                  <FilterListIcon />
+                </IconButton>
+              </InputAdornment>
+          }
+          fullWidth
+        />
+      </FormControl>
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -58,7 +64,7 @@ const FilterTools = ({ filter, setFilter, toolBarTitles, customFields, filters, 
               return (
                 <MenuItem key={index}>
                   <TextField
-                    label={field.title}
+                    label={field.title[0].toUpperCase() + field.title.slice(1)}
                     name={field.title}
                     value={filters[field.title] || ""}
                     onChange={handleFilterChange}
@@ -95,7 +101,7 @@ const FilterTools = ({ filter, setFilter, toolBarTitles, customFields, filters, 
                     value={filters[title.toLowerCase()] || ""}
                     onChange={handleFilterChange}
                   >
-                    <MenuItem value=""></MenuItem>
+                    <MenuItem value=""><em>No Selection</em></MenuItem>
                     {title === "Priority" && Object.keys(priorityOrder).map((key) => (
                       <MenuItem key={key} value={key}>{key[0].toUpperCase() + key.slice(1)}</MenuItem>
                     ))}

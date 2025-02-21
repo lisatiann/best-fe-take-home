@@ -3,7 +3,7 @@ import CreateAndEditTaskDialog from "./CreateAndEditTaskDialog";
 import Task from "./Task";
 import ToolBar from "./ToolBar";
 import FilterTools from "./FilterTools";
-import { Button, Table, TableBody, TableContainer, TableHead, Paper, TablePagination } from "@mui/material";
+import { Button, Table, TableBody, TableContainer, TableHead, Paper, TablePagination, Box, Typography } from "@mui/material";
 import { priorityOrder, statusOrder } from "../constant";
 import { saveDataToLocalStorage, loadDataFromLocalStorage } from "../utils/taskUtils";
 import mockData from '../assets/mockData.json';
@@ -44,7 +44,7 @@ const TableView = () => {
     setOrderBy(property);
   };
 
-  const handleChangePage = (event, newPage) => {
+  const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
 
@@ -111,17 +111,24 @@ const TableView = () => {
   };
 
   return (
-    <div>
+    <Box sx={{ padding: '20px' }}>
+      <Typography variant="h5" gutterBottom>
+        Task Management
+      </Typography>
       <TableContainer component={Paper}>
-        <FilterTools
-          filter={filter}
-          setFilter={setFilter}
-          toolBarTitles={toolBarTitles}
-          customFields={customFields}
-          filters={filters}
-          setFilters={setFilters}
-        />
-        <Button variant="contained" onClick={() => setOpen(true)}>Create Task</Button>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', padding: '10px', height: '35px' }}>
+          <Box sx={{ flexGrow: 1, flexShrink: 1, marginRight: '10px' }}>
+            <FilterTools
+              filter={filter}
+              setFilter={setFilter}
+              toolBarTitles={toolBarTitles}
+              customFields={customFields}
+              filters={filters}
+              setFilters={setFilters}
+            />
+          </Box>
+          <Button variant="contained" onClick={() => setOpen(true)}>Create Task</Button>
+        </Box>
         <CreateAndEditTaskDialog
           newID={tasks.length + 1}
           open={open}
@@ -162,10 +169,10 @@ const TableView = () => {
         count={filteredTasks.length}
         rowsPerPage={rowsPerPage}
         page={page}
-        onPageChange={handleChangePage}
+        onPageChange={handlePageChange}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    </div>
+    </Box>
   )
 }
 

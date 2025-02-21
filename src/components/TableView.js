@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import CreateAndEditTaskDialog from "./CreateAndEditTaskDialog";
 import Task from "./Task";
 import ToolBar from "./ToolBar";
 import { Button, Table, TableBody, TableContainer, TableHead, Paper, TablePagination } from "@mui/material";
 import { priorityOrder, statusOrder } from "../constant";
+import { saveDataToLocalStorage, loadDataFromLocalStorage } from "../utils/taskUtils";
 import mockData from '../assets/mockData.json';
 
 // manually set the order of priority and status
@@ -18,14 +19,19 @@ const getOrderValue = (orderBy, value) => {
 };
 
 const TableView = () => {
-  const [tasks, setTasks] = useState(mockData);
-  const [toolBarTitles, setToolBarTitles] = useState(['Title', 'Priority', 'Status']);
-  const [customFields, setCustomFields] = useState([]);
+  const { tasks: initialTasks, toolBarTitles: initialToolBarTitles, customFields: initialCustomFields } = loadDataFromLocalStorage();
+  const [tasks, setTasks] = useState(initialTasks.length ? initialTasks : mockData);
+  const [toolBarTitles, setToolBarTitles] = useState(initialToolBarTitles);
+  const [customFields, setCustomFields] = useState(initialCustomFields);
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('title');
+
+  useEffect(() => {
+    saveDataToLocalStorage(tasks, toolBarTitles, customFields);
+  }, [tasks, toolBarTitles, customFields]);
 
   // sort the tasks array based on the selected column
   const handleRequestSort = (event, property) => {
@@ -70,7 +76,6 @@ const TableView = () => {
       return { ...task, [field.title]: field.type === 'checkbox' ? false : '' };
     }));
   };
-
   const handleDeleteField = (title) => {
     setCustomFields(customFields.filter(field => field.title !== title));
     setTasks(tasks.map(task => {

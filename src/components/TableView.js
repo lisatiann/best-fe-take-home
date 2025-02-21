@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import CreateAndEditTaskDialog from "./CreateAndEditTaskDialog";
 import Task from "./Task";
 import ToolBar from "./ToolBar";
+import FilterTools from "./FilterTools";
 import { Button, Table, TableBody, TableContainer, TableHead, Paper, TablePagination } from "@mui/material";
 import { priorityOrder, statusOrder } from "../constant";
 import { saveDataToLocalStorage, loadDataFromLocalStorage } from "../utils/taskUtils";
@@ -28,6 +29,8 @@ const TableView = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('title');
+  const [filter, setFilter] = useState("");
+  const [filters, setFilters] = useState({});
 
   useEffect(() => {
     saveDataToLocalStorage(tasks, toolBarTitles, customFields);
@@ -58,7 +61,28 @@ const TableView = () => {
       const bValue = getOrderValue(orderBy, b[orderBy]);
       return (aValue < bValue ? -1 : 1) * (order === 'asc' ? 1 : -1);
     });
-  }, [tasks, order, orderBy]);  
+  }, [tasks, order, orderBy]);
+
+  // filter the tasks based on the search input and selected filters
+  const filteredTasks = useMemo(() => {
+    return sortedTasks.filter(task => {
+      const matchesSearch = Object.keys(task).some(key => {
+        if (typeof task[key] === "string" || typeof task[key] === "number") {
+          return task[key].toString().toLowerCase().includes(filter.toLowerCase());
+        }
+        return false;
+      });
+
+      const matchesFilters = Object.keys(filters).every(key => {
+        if (typeof task[key] === "boolean") {
+          return task[key] === filters[key];
+        }
+        return task[key] === filters[key];
+      });
+
+      return matchesSearch && matchesFilters;
+    });
+  }, [sortedTasks, filter, filters]);
 
   const handleCreateTask = (newTask) => {
     setTasks([...tasks, newTask]);
@@ -76,6 +100,7 @@ const TableView = () => {
       return { ...task, [field.title]: field.type === 'checkbox' ? false : '' };
     }));
   };
+
   const handleDeleteField = (title) => {
     setCustomFields(customFields.filter(field => field.title !== title));
     setTasks(tasks.map(task => {
@@ -88,6 +113,14 @@ const TableView = () => {
   return (
     <div>
       <TableContainer component={Paper}>
+        <FilterTools
+          filter={filter}
+          setFilter={setFilter}
+          toolBarTitles={toolBarTitles}
+          customFields={customFields}
+          filters={filters}
+          setFilters={setFilters}
+        />
         <Button variant="contained" onClick={() => setOpen(true)}>Create Task</Button>
         <CreateAndEditTaskDialog
           newID={tasks.length + 1}
@@ -111,7 +144,7 @@ const TableView = () => {
           </TableHead>
           <TableBody>
             {/* slice the tasks array to display only the current page */}
-            {sortedTasks.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((task, index) => (
+            {filteredTasks.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((task, index) => (
               <Task
                 key={index}
                 task={task}
@@ -126,7 +159,7 @@ const TableView = () => {
       <TablePagination
         rowsPerPageOptions={[10, 20, 50]}
         component="div"
-        count={tasks.length}
+        count={filteredTasks.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

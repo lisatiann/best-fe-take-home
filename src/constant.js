@@ -1,8 +1,21 @@
-export const priorityOrder = { none: 1, low: 2, medium: 3, high: 4, urgent: 5 };
-export const statusOrder = { not_started: 1, in_progress: 2, completed: 3 };
+export const priorityOrder = {
+  none: 0,
+  low: 1,
+  medium: 2,
+  high: 3,
+  urgent: 4
+};
+
+export const statusOrder = {
+  not_started: 0,
+  in_progress: 1,
+  completed: 2
+};
+
 export const completionStatusLabel = {
-  not_started: 'Not Started',
-  in_progress: 'In Progress',
-  completed: 'Completed',
-}
+  not_started: "Not Started",
+  in_progress: "In Progress",
+  completed: "Completed"
+};
+
 export const customFieldTypes = ['text', 'number', 'checkbox']
